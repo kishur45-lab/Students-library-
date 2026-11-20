@@ -1,0 +1,2806 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#F4EFE6" id="meta-theme-color" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VITRUVIA" />
+  <title>VITRUVIA — Cognitive Study Telemetry</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #F4EFE6;
+      --bg-elev: #FAF7F1;
+      --bg-subtle: #ECE5D8;
+      --ink: #1F1C18;
+      --ink-muted: #6A6358;
+      --ink-faint: #9B9386;
+      --border: rgba(31, 28, 24, 0.12);
+      --border-strong: rgba(31, 28, 24, 0.24);
+      --grid: rgba(31, 28, 24, 0.045);
+      --brass: #A68246;
+      --brass-soft: rgba(166, 130, 70, 0.14);
+      --sage: #386654;
+      --sage-soft: rgba(56, 102, 84, 0.13);
+      --sienna: #A64B2E;
+      --sienna-soft: rgba(166, 75, 46, 0.12);
+      --shadow: 0 4px 20px rgba(31, 28, 24, 0.05);
+      --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0F1114;
+      --bg-elev: #161A1F;
+      --bg-subtle: #1D2229;
+      --ink: #EAE4D8;
+      --ink-muted: #9A958A;
+      --ink-faint: #625E57;
+      --border: rgba(234, 228, 216, 0.11);
+      --border-strong: rgba(234, 228, 216, 0.22);
+      --grid: rgba(234, 228, 216, 0.03);
+      --brass: #C9A66B;
+      --brass-soft: rgba(201, 166, 107, 0.14);
+      --sage: #55A687;
+      --sage-soft: rgba(85, 166, 135, 0.15);
+      --sienna: #D46C4B;
+      --sienna-soft: rgba(212, 108, 75, 0.15);
+      --shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        linear-gradient(to right, var(--grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+      background-size: 28px 28px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .app-shell {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: transparent;
+    }
+
+    /* Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px 12px;
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      line-height: 1;
+    }
+
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg-elev);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.94);
+    }
+
+    .icon-btn:hover {
+      border-color: var(--brass);
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 16px 16px 96px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .tab-panel {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      animation: fadeUp 0.22s ease;
+    }
+
+    .tab-panel.active {
+      display: flex;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Typography */
+    .card {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .kicker {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kicker-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--brass);
+      display: inline-block;
+    }
+
+    .serif-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.15;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .muted {
+      color: var(--ink-muted);
+    }
+
+    .small {
+      font-size: 12px;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0;
+    }
+
+    /* Buttons & Inputs */
+    .btn {
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-elev);
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.16s ease;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn:hover { border-color: var(--brass); }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      border-color: var(--ink);
+    }
+
+    .btn-brass {
+      background: var(--brass);
+      color: #0F1114;
+      border-color: var(--brass);
+      font-weight: 600;
+    }
+
+    .btn-sage {
+      background: var(--sage);
+      color: #FAF7F1;
+      border-color: var(--sage);
+    }
+
+    .btn-danger {
+      background: var(--sienna-soft);
+      color: var(--sienna);
+      border-color: color-mix(in srgb, var(--sienna) 35%, transparent);
+    }
+
+    .btn-sm {
+      font-size: 11px;
+      padding: 5px 10px;
+    }
+
+    .input, .select {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .input:focus, .select:focus {
+      border-color: var(--brass);
+    }
+
+    .field-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-muted);
+      margin-bottom: 5px;
+    }
+
+    /* Segmented Controls */
+    .segmented {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .seg-btn {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .seg-btn.active {
+      background: var(--bg-elev);
+      color: var(--ink);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Mandate Banner */
+    .mandate-card {
+      border-left: 3px solid var(--brass);
+      background: linear-gradient(135deg, var(--bg-elev) 0%, color-mix(in srgb, var(--brass-soft) 50%, var(--bg-elev)) 100%);
+    }
+
+    .mandate-quote {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-style: italic;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+      margin-top: 4px;
+    }
+
+    /* Vitruvian Rings */
+    .rings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .ring-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 10px 4px 6px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+    }
+
+    .ring-svg-wrap {
+      position: relative;
+      width: 78px;
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ring-svg {
+      width: 78px;
+      height: 78px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 5.5;
+    }
+
+    .ring-progress {
+      fill: none;
+      stroke-width: 5.5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .ring-val {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .ring-label {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-top: 8px;
+      line-height: 1.25;
+    }
+
+    /* Diagnostic Brief */
+    .brief-item {
+      display: flex;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    .brief-item:last-child { margin-bottom: 0; }
+
+    .brief-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      height: fit-content;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .badge-warn { background: var(--sienna-soft); color: var(--sienna); }
+    .badge-good { background: var(--sage-soft); color: var(--sage); }
+    .badge-info { background: var(--brass-soft); color: var(--brass); }
+
+    /* Exam Macro Rows */
+    .exam-row {
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .exam-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .exam-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .exam-name {
+      font-weight: 600;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .exam-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .stacked-bar {
+      height: 7px;
+      width: 100%;
+      background: var(--bg-subtle);
+      border-radius: 99px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .bar-learn { background: var(--brass); }
+    .bar-revise { background: var(--sage); }
+    .bar-test { background: var(--sienna); }
+
+    .legend-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-swatch {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    /* Astrolabe Chronometer */
+    .astrolabe-wrap {
+      position: relative;
+      width: 248px;
+      height: 248px;
+      margin: 6px auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .astrolabe-svg {
+      width: 248px;
+      height: 248px;
+    }
+
+    .astrolabe-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .chrono-time {
+      font-family: var(--font-mono);
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--ink);
+    }
+
+    .chrono-status {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-top: 4px;
+    }
+
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tel-cell {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 6px;
+      text-align: center;
+    }
+
+    .tel-num {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .tel-lbl {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    .mode-pills {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .mode-pill {
+      padding: 8px 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--ink-muted);
+      font-size: 11px;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mode-pill.active-learn {
+      background: var(--brass-soft);
+      border-color: var(--brass);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .mode-pill.active-revise {
+      background: var(--sage-soft);
+      border-color: var(--sage);
+      color: var(--sage);
+      font-weight: 600;
+    }
+
+    .mode-pill.active-test {
+      background: var(--sienna-soft);
+      border-color: var(--sienna);
+      color: var(--sienna);
+      font-weight: 600;
+    }
+
+    /* Zen Mode Overlay */
+    .zen-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: #0B0D10;
+      color: #EAE4D8;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .zen-overlay.open { display: flex; }
+
+    .zen-time {
+      font-family: var(--font-mono);
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: #EAE4D8;
+      margin: 20px 0 8px;
+    }
+
+    /* Architecture Slots & Tasks */
+    .date-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .slot-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      margin-bottom: 8px;
+    }
+
+    .slot-card.done {
+      opacity: 0.62;
+    }
+
+    .slot-time {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brass);
+    }
+
+    .slot-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .slot-meta {
+      font-size: 11px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .task-row:last-child { border-bottom: none; }
+
+    .task-check {
+      width: 19px;
+      height: 19px;
+      border-radius: 5px;
+      border: 1.5px solid var(--border-strong);
+      background: transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--bg);
+    }
+
+    .task-check.checked {
+      background: var(--sage);
+      border-color: var(--sage);
+    }
+
+    .task-text {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .task-text.checked {
+      text-decoration: line-through;
+      color: var(--ink-faint);
+    }
+
+    .guardrail-alert {
+      background: var(--sienna-soft);
+      border: 1px solid color-mix(in srgb, var(--sienna) 35%, transparent);
+      color: var(--sienna);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .guardrail-alert.show { display: block; }
+
+    /* Ledger Tags */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .tag-pill {
+      padding: 7px 11px;
+      border-radius: 99px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg);
+      color: var(--ink-muted);
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.14s ease;
+    }
+
+    .tag-pill.pos-on {
+      background: var(--sage-soft);
+      border-color: var(--sage);
+      color: var(--sage);
+      font-weight: 600;
+    }
+
+    .tag-pill.neg-on {
+      background: var(--sienna-soft);
+      border-color: var(--sienna);
+      color: var(--sienna);
+      font-weight: 600;
+    }
+
+    /* Atlas 24-Hour Map */
+    .hour-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .hour-cell {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 2px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--bg);
+      transition: transform 0.14s ease, border-color 0.14s ease;
+    }
+
+    .hour-cell.selected {
+      border-color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .hour-bar-track {
+      height: 30px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .hour-bar-fill {
+      width: 65%;
+      border-radius: 3px 3px 1px 1px;
+      min-height: 2px;
+    }
+
+    .hour-lbl {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--ink-muted);
+    }
+
+    .corr-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      margin-bottom: 7px;
+    }
+
+    .corr-delta {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      z-index: 50;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      background: color-mix(in srgb, var(--bg-elev) 94%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border);
+      padding: 6px 4px calc(8px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--ink-faint);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 5px 2px;
+      cursor: pointer;
+      transition: color 0.16s ease;
+    }
+
+    .nav-btn.active {
+      color: var(--ink);
+    }
+
+    .nav-roman {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1;
+      width: 26px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+    }
+
+    .nav-btn.active .nav-roman {
+      background: var(--brass-soft);
+      color: var(--brass);
+    }
+
+    .nav-lbl {
+      font-family: var(--font-mono);
+      font-size: 8.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Modals & Toast */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(10, 12, 14, 0.62);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 460px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border-strong);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      max-height: 85dvh;
+      overflow-y: auto;
+    }
+
+    .toast {
+      position: fixed;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-12px);
+      background: var(--ink);
+      color: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 9px 14px;
+      border-radius: 99px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.24s ease;
+      z-index: 120;
+      white-space: nowrap;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .row { display: flex; gap: 8px; align-items: center; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-12 { margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <circle cx="32" cy="32" r="24" stroke="var(--brass)" stroke-width="2" />
+          <rect x="13" y="15" width="38" height="38" stroke="var(--ink)" stroke-width="1.6" />
+          <line x1="32" y1="4" x2="32" y2="60" stroke="var(--brass)" stroke-width="1" stroke-opacity="0.55" />
+          <line x1="4" y1="32" x2="60" y2="32" stroke="var(--brass)" stroke-width="1" stroke-opacity="0.55" />
+          <path d="M22 22L32 45L42 22" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="32" cy="32" r="3" fill="var(--sienna)" />
+        </svg>
+        <div>
+          <div class="brand-title">VITRUVIA</div>
+          <div class="brand-sub" id="header-date-sub">COGNITIVE TELEMETRY</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="btn-theme" title="Toggle Archival / Obsidian Theme" aria-label="Toggle theme">
+          <svg id="theme-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="icon-btn" id="btn-vault" title="Data Vault & Backups" aria-label="Data Vault">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Tab Panels -->
+    <main class="main">
+      <!-- TAB I: OBSERVATORY -->
+      <section class="tab-panel active" id="panel-observatory">
+        <div class="card mandate-card">
+          <div class="card-header" style="margin-bottom:4px;">
+            <span class="kicker"><span class="kicker-dot"></span> Yesterday's Recovery Mandate</span>
+            <button class="btn btn-sm" onclick="switchTab('ledger')">Edit</button>
+          </div>
+          <div class="mandate-quote" id="obs-mandate-text">"Lock phone in another room before 6:30 AM slot."</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> Vitruvian Telemetry Rings</span>
+            <span class="mono small muted" id="obs-today-hrs">0.0h today</span>
+          </div>
+          <div class="rings-grid">
+            <div class="ring-box">
+              <div class="ring-svg-wrap">
+                <svg class="ring-svg" viewBox="0 0 80 80">
+                  <circle class="ring-track" cx="40" cy="40" r="32"></circle>
+                  <circle class="ring-progress" id="ring-consistency" cx="40" cy="40" r="32" stroke="var(--brass)" stroke-dasharray="201.06" stroke-dashoffset="201.06"></circle>
+                </svg>
+                <span class="ring-val" id="val-consistency">0%</span>
+              </div>
+              <div class="ring-label">Consistency<br/>Index</div>
+            </div>
+            <div class="ring-box">
+              <div class="ring-svg-wrap">
+                <svg class="ring-svg" viewBox="0 0 80 80">
+                  <circle class="ring-track" cx="40" cy="40" r="32"></circle>
+                  <circle class="ring-progress" id="ring-focus" cx="40" cy="40" r="32" stroke="var(--sage)" stroke-dasharray="201.06" stroke-dashoffset="201.06"></circle>
+                </svg>
+                <span class="ring-val" id="val-focus">0%</span>
+              </div>
+              <div class="ring-label">Focus<br/>Integrity</div>
+            </div>
+            <div class="ring-box">
+              <div class="ring-svg-wrap">
+                <svg class="ring-svg" viewBox="0 0 80 80">
+                  <circle class="ring-track" cx="40" cy="40" r="32"></circle>
+                  <circle class="ring-progress" id="ring-reality" cx="40" cy="40" r="32" stroke="var(--sienna)" stroke-dasharray="201.06" stroke-dashoffset="201.06"></circle>
+                </svg>
+                <span class="ring-val" id="val-reality">0%</span>
+              </div>
+              <div class="ring-label">Task Reality<br/>Score</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> Mentor Diagnostic Brief</span>
+            <span class="mono small muted">LIVE AUDIT</span>
+          </div>
+          <div id="obs-diagnostic-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> Exam-Wise Macro Tracker</span>
+            <div class="segmented" id="exam-range-seg">
+              <button class="seg-btn active" data-range="today">Today</button>
+              <button class="seg-btn" data-range="month">Month</button>
+              <button class="seg-btn" data-range="year">Year</button>
+            </div>
+          </div>
+          <div id="obs-exam-list"></div>
+          <div class="legend-row">
+            <span class="legend-item"><span class="legend-swatch bar-learn"></span>New Learning</span>
+            <span class="legend-item"><span class="legend-swatch bar-revise"></span>Active Recall / Revision</span>
+            <span class="legend-item"><span class="legend-swatch bar-test"></span>Testing / PYQs</span>
+          </div>
+          <div class="mt-12">
+            <button class="btn btn-sm" style="width:100%;" id="btn-open-exam-modal">+ Add Target Exam</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB II: CHRONOMETER -->
+      <section class="tab-panel" id="panel-chronometer">
+        <div class="card">
+          <div class="card-header">
+            <div class="segmented" id="chrono-type-seg">
+              <button class="seg-btn active" data-type="stopwatch">Stopwatch</button>
+              <button class="seg-btn" data-type="timer">Countdown</button>
+            </div>
+            <button class="btn btn-sm" id="btn-zen-mode">Zen Mode</button>
+          </div>
+
+          <div id="timer-presets" style="display:none; margin-bottom:10px;">
+            <div class="row" style="justify-content:center; flex-wrap:wrap;">
+              <button class="btn btn-sm timer-preset" data-min="25">25m</button>
+              <button class="btn btn-sm timer-preset" data-min="45">45m</button>
+              <button class="btn btn-sm timer-preset" data-min="60">60m</button>
+              <button class="btn btn-sm timer-preset" data-min="90">90m</button>
+              <input type="number" id="custom-timer-min" class="input" style="width:72px; padding:5px 8px; font-size:11px;" min="1" max="300" placeholder="Min" />
+            </div>
+          </div>
+
+          <!-- Vitruvian Astrolabe -->
+          <div class="astrolabe-wrap">
+            <svg class="astrolabe-svg" viewBox="0 0 240 240">
+              <circle cx="120" cy="120" r="108" fill="none" stroke="var(--border-strong)" stroke-width="1" />
+              <circle cx="120" cy="120" r="96" fill="none" stroke="var(--brass)" stroke-width="1.4" stroke-opacity="0.45" />
+              <rect x="44" y="49" width="152" height="152" fill="none" stroke="var(--border)" stroke-width="1" />
+              <line x1="120" y1="8" x2="120" y2="232" stroke="var(--border)" stroke-width="0.8" />
+              <line x1="8" y1="120" x2="232" y2="120" stroke="var(--border)" stroke-width="0.8" />
+              <g id="astrolabe-ticks"></g>
+              <circle id="astrolabe-progress" cx="120" cy="120" r="96" fill="none" stroke="var(--brass)" stroke-width="3.5" stroke-linecap="round"
+                stroke-dasharray="603.19" stroke-dashoffset="603.19" transform="rotate(-90 120 120)" />
+              <g id="astrolabe-needle" transform="rotate(0 120 120)">
+                <circle cx="120" cy="24" r="4.5" fill="var(--sienna)" />
+              </g>
+            </svg>
+            <div class="astrolabe-center">
+              <div class="chrono-time" id="chrono-display">00:00:00</div>
+              <div class="chrono-status" id="chrono-status">STANDBY</div>
+            </div>
+          </div>
+
+          <div class="telemetry-strip">
+            <div class="tel-cell">
+              <div class="tel-num" id="live-integrity" style="color:var(--sage);">100%</div>
+              <div class="tel-lbl">Focus Integrity</div>
+            </div>
+            <div class="tel-cell">
+              <div class="tel-num" id="live-pauses">0</div>
+              <div class="tel-lbl">Pauses</div>
+            </div>
+            <div class="tel-cell">
+              <div class="tel-num" id="live-switches">0</div>
+              <div class="tel-lbl">App Exits</div>
+            </div>
+          </div>
+
+          <div class="row" style="justify-content:center;">
+            <button class="btn btn-primary" style="flex:1.4; padding:12px;" id="btn-chrono-toggle">Start Session</button>
+            <button class="btn btn-sage" style="flex:1; padding:12px;" id="btn-chrono-save">Log &amp; Finish</button>
+            <button class="btn" style="padding:12px;" id="btn-chrono-reset" title="Reset">↺</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> Session Binding &amp; Mode</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div>
+              <label class="field-label" for="chrono-slot-select">Bind to Today's Study Slot (tracks start delay)</label>
+              <select class="select" id="chrono-slot-select">
+                <option value="">Unscheduled Deep Work</option>
+              </select>
+            </div>
+            <div class="grid-2">
+              <div>
+                <label class="field-label" for="chrono-exam-select">Target Exam</label>
+                <select class="select" id="chrono-exam-select"></select>
+              </div>
+              <div>
+                <label class="field-label" for="chrono-subject-input">Subject / Topic</label>
+                <input type="text" class="input" id="chrono-subject-input" placeholder="e.g. Modern History" value="Polity — Fundamental Rights" />
+              </div>
+            </div>
+            <div>
+              <span class="field-label">Cognitive Mode (1-Tap Quality Audit)</span>
+              <div class="mode-pills" id="chrono-mode-pills">
+                <button class="mode-pill active-learn" data-mode="learn">New Learning</button>
+                <button class="mode-pill" data-mode="revise">Active Recall</button>
+                <button class="mode-pill" data-mode="test">Testing / PYQ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB III: ARCHITECTURE -->
+      <section class="tab-panel" id="panel-architecture">
+        <div class="card">
+          <div class="date-bar">
+            <button class="btn btn-sm" id="arch-prev-day">‹ Prev</button>
+            <div style="text-align:center;">
+              <div class="serif-title" style="font-size:19px;" id="arch-date-label">Today</div>
+              <input type="date" id="arch-date-input" class="mono small" style="border:none; background:transparent; color:var(--ink-muted); text-align:center;" />
+            </div>
+            <button class="btn btn-sm" id="arch-next-day">Next ›</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> Full-Day Study Slots</span>
+            <div class="row">
+              <button class="btn btn-sm" id="btn-copy-tomorrow">Copy → Tomorrow</button>
+              <button class="btn btn-sm" id="btn-open-blueprints">Blueprints</button>
+            </div>
+          </div>
+          <div id="arch-slots-list"></div>
+          <div class="divider"></div>
+          <div class="kicker" style="margin-bottom:8px;">Add Study Slot</div>
+          <div class="grid-2">
+            <div>
+              <label class="field-label">Start</label>
+              <input type="time" class="input" id="slot-start" value="06:00" />
+            </div>
+            <div>
+              <label class="field-label">End</label>
+              <input type="time" class="input" id="slot-end" value="08:00" />
+            </div>
+          </div>
+          <div class="grid-2 mt-8">
+            <select class="select" id="slot-exam"></select>
+            <select class="select" id="slot-mode">
+              <option value="learn">New Learning</option>
+              <option value="revise">Active Recall</option>
+              <option value="test">Testing / PYQs</option>
+            </select>
+          </div>
+          <div class="row mt-8">
+            <input type="text" class="input" id="slot-subject" placeholder="Subject / Chapter (e.g. Geography NCERT)" />
+            <button class="btn btn-primary" id="btn-add-slot">Add</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> Daily Target Ledger</span>
+            <span class="mono small muted" id="arch-task-stats">0 / 0 done</span>
+          </div>
+          <div class="guardrail-alert" id="overplan-alert">
+            <strong>Over-Planning Guardrail:</strong> You have more than 8 targets today. Competitive exam telemetry shows >8 daily tasks lowers completion below 45% and damages confidence. Trim to high-leverage essentials.
+          </div>
+          <div id="arch-tasks-list"></div>
+          <div class="row mt-12">
+            <input type="text" class="input" id="new-task-input" placeholder="Add realistic target (max 8 recommended)..." />
+            <button class="btn btn-primary" id="btn-add-task">Add</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB IV: LEDGER -->
+      <section class="tab-panel" id="panel-ledger">
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> 30-Second Nightly Check-In</span>
+            <span class="mono small" id="ledger-net-badge" style="font-weight:600;">NET 0</span>
+          </div>
+          <div class="row" style="justify-content:space-between; margin-bottom:12px;">
+            <span class="small muted">Logging for:</span>
+            <input type="date" id="ledger-date-input" class="input mono small" style="width:auto; padding:5px 8px;" />
+          </div>
+
+          <div class="field-label" style="color:var(--sage);">Positive (+) Signals — What Drove Output?</div>
+          <div class="tag-cloud" id="ledger-pos-tags"></div>
+          <div class="row mt-8">
+            <input type="text" class="input" id="custom-pos-input" placeholder="+ Add custom positive trigger" style="font-size:12px; padding:7px 10px;" />
+            <button class="btn btn-sm" id="btn-add-pos-tag">Add</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="field-label" style="color:var(--sienna);">Negative (−) Friction — What Stole Focus?</div>
+          <div class="tag-cloud" id="ledger-neg-tags"></div>
+          <div class="row mt-8">
+            <input type="text" class="input" id="custom-neg-input" placeholder="− Add custom distraction/friction" style="font-size:12px; padding:7px 10px;" />
+            <button class="btn btn-sm" id="btn-add-neg-tag">Add</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <label class="field-label" for="ledger-rule-input">Single-Line Recovery Rule (Don't Repeat Tomorrow)</label>
+          <input type="text" class="input" id="ledger-rule-input" placeholder="e.g. No heavy lunch before 2 PM Economics slot." />
+          <button class="btn btn-brass mt-12" style="width:100%;" id="btn-save-ledger">Seal Today's Ledger</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> Recent Ledger Archive</span>
+          </div>
+          <div id="ledger-history-list"></div>
+        </div>
+      </section>
+
+      <!-- TAB V: ATLAS -->
+      <section class="tab-panel" id="panel-atlas">
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> 24-Hour Biological Focus &amp; Slump Map</span>
+            <span class="mono small muted">TAP HOUR</span>
+          </div>
+          <p class="small muted">Automatically compiled from your Chronometer logs, pauses, and app exits across all days.</p>
+          <div class="hour-grid" id="atlas-hour-grid"></div>
+          <div id="atlas-hour-detail" style="margin-top:12px; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm);"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> WHOOP-Style Correlation Engine</span>
+            <span class="mono small muted">AVG HR IMPACT</span>
+          </div>
+          <p class="small muted" style="margin-bottom:10px;">How your nightly + / − behaviors mathematically impact your daily productive hours.</p>
+          <div id="atlas-correlations"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> 14-Day Consistency vs. Burnout</span>
+            <span class="mono small muted" id="atlas-avg-hrs">Avg 0.0h</span>
+          </div>
+          <div id="atlas-14day-chart"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="kicker"><span class="kicker-dot"></span> Cognitive Quality Ratio (All-Time)</span>
+          </div>
+          <div class="stacked-bar" id="atlas-quality-bar" style="height:12px;"></div>
+          <div class="legend-row" id="atlas-quality-legend" style="margin-top:10px;"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" aria-label="Primary Navigation">
+      <button class="nav-btn active" data-tab="observatory">
+        <span class="nav-roman">I</span>
+        <span class="nav-lbl">Observe</span>
+      </button>
+      <button class="nav-btn" data-tab="chronometer">
+        <span class="nav-roman">II</span>
+        <span class="nav-lbl">Chrono</span>
+      </button>
+      <button class="nav-btn" data-tab="architecture">
+        <span class="nav-roman">III</span>
+        <span class="nav-lbl">Plan</span>
+      </button>
+      <button class="nav-btn" data-tab="ledger">
+        <span class="nav-roman">IV</span>
+        <span class="nav-lbl">Ledger</span>
+      </button>
+      <button class="nav-btn" data-tab="atlas">
+        <span class="nav-roman">V</span>
+        <span class="nav-lbl">Atlas</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Zen Mode Overlay -->
+  <div class="zen-overlay" id="zen-overlay">
+    <div class="kicker" style="color:#C9A66B;">VITRUVIA · DEEP WORK SANCTUARY</div>
+    <div id="zen-subject-label" style="font-family:var(--font-serif); font-size:22px; margin-top:8px; color:#EAE4D8;"></div>
+    <div class="zen-time" id="zen-time-display">00:00:00</div>
+    <div class="mono small" id="zen-integrity-display" style="color:#55A687;">FOCUS INTEGRITY: 100%</div>
+    <div class="row" style="margin-top:32px;">
+      <button class="btn" style="background:#1D2229; color:#EAE4D8; border-color:rgba(234,228,216,0.2);" id="btn-zen-toggle-run">Pause</button>
+      <button class="btn" style="background:transparent; color:#C9A66B; border-color:#C9A66B;" id="btn-zen-exit">Exit Zen</button>
+    </div>
+  </div>
+
+  <!-- Data Vault Modal -->
+  <div class="modal-backdrop" id="modal-vault">
+    <div class="modal-sheet">
+      <div class="card-header">
+        <span class="serif-title">Data Vault</span>
+        <button class="btn btn-sm" onclick="closeModal('modal-vault')">Close</button>
+      </div>
+      <p class="small muted" style="margin-bottom:14px;">All telemetry is stored locally on your device at ₹0 cloud cost. Export a JSON archive periodically so your years of study data stay safe forever.</p>
+      <div style="display:flex; flex-direction:column; gap:9px;">
+        <button class="btn btn-primary" id="btn-export-json">Export Complete JSON Backup</button>
+        <label class="btn" style="cursor:pointer;">
+          Import JSON Backup
+          <input type="file" id="input-import-json" accept="application/json" style="display:none;" />
+        </label>
+        <div class="divider"></div>
+        <button class="btn" id="btn-load-demo">Load 14-Day Realistic Demo Telemetry</button>
+        <button class="btn btn-danger" id="btn-wipe-blank">Reset to Blank Slate (Start Fresh)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Exam Modal -->
+  <div class="modal-backdrop" id="modal-exam">
+    <div class="modal-sheet">
+      <div class="card-header">
+        <span class="serif-title">Add Target Exam</span>
+        <button class="btn btn-sm" onclick="closeModal('modal-exam')">Close</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div>
+          <label class="field-label">Exam Name</label>
+          <input type="text" class="input" id="new-exam-name" placeholder="e.g. UPSC CSE, BPSC, JEE, NEET, SSC CGL" />
+        </div>
+        <div>
+          <label class="field-label">Daily Sustainable Target (Hours)</label>
+          <input type="number" class="input" id="new-exam-target" value="6" min="1" max="16" step="0.5" />
+        </div>
+        <button class="btn btn-primary mt-8" id="btn-confirm-add-exam">Save Target Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blueprints Modal -->
+  <div class="modal-backdrop" id="modal-blueprints">
+    <div class="modal-sheet">
+      <div class="card-header">
+        <span class="serif-title">Day Blueprints</span>
+        <button class="btn btn-sm" onclick="closeModal('modal-blueprints')">Close</button>
+      </div>
+      <p class="small muted" style="margin-bottom:10px;">Apply a proven full-day structure to <strong id="bp-target-date-lbl">today</strong> in one tap.</p>
+      <div id="blueprints-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <div class="divider"></div>
+      <div class="row">
+        <input type="text" class="input" id="new-bp-name" placeholder="Save current day as blueprint..." />
+        <button class="btn btn-primary" id="btn-save-blueprint">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // =========================================================================
+    // VITRUVIA CORE ENGINE — Local-First Cognitive Study Telemetry
+    // =========================================================================
+    const STORAGE_KEY = 'vitruvia_state_v1';
+
+    const DEFAULT_POS_TAGS = [
+      'Morning Revision Done',
+      'Phone in Another Room',
+      'Mock / PYQs Solved',
+      'Exercised',
+      'Sleep Target (7h+)',
+      'Unbroken 90m Block'
+    ];
+
+    const DEFAULT_NEG_TAGS = [
+      'Phone Distraction',
+      'Heavy Meal / Sleepy',
+      'Poor Sleep (<6h)',
+      'Over-Planning',
+      'Skipped Revision',
+      'Late Morning Start'
+    ];
+
+    const EXAM_PALETTE = ['#A68246', '#386654', '#A64B2E', '#4F6D8A', '#7E5A82'];
+
+    function fmtDateISO(d) {
+      const yr = d.getFullYear();
+      const mo = String(d.getMonth() + 1).padStart(2, '0');
+      const da = String(d.getDate()).padStart(2, '0');
+      return `${yr}-${mo}-${da}`;
+    }
+
+    function offsetDateISO(daysOffset) {
+      const d = new Date();
+      d.setHours(12, 0, 0, 0);
+      d.setDate(d.getDate() + daysOffset);
+      return fmtDateISO(d);
+    }
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    function buildDemoState() {
+      const exams = [
+        { id: 'ex_main', name: 'Primary Competitive Exam', targetHours: 6, color: '#A68246' },
+        { id: 'ex_opt', name: 'State / Secondary Exam', targetHours: 2, color: '#386654' }
+      ];
+
+      const sessions = [];
+      const ledgerByDate = {};
+      const tasksByDate = {};
+      const slotsByDate = {};
+
+      // Deterministic 14-day realistic telemetry with morning peak & afternoon slump
+      const dayPatterns = [
+        { hrs: 7.4, pos: ['Morning Revision Done', 'Phone in Another Room', 'Sleep Target (7h+)'], neg: [], rule: 'Protect the 6 AM active recall block before checking any messages.' },
+        { hrs: 8.1, pos: ['Morning Revision Done', 'Mock / PYQs Solved', 'Exercised'], neg: ['Heavy Meal / Sleepy'], rule: 'Switch afternoon slot after lunch to MCQs instead of dense reading.' },
+        { hrs: 5.0, pos: ['Exercised'], neg: ['Phone Distraction', 'Late Morning Start'], rule: 'Keep charger outside bedroom tonight so morning starts on time.' },
+        { hrs: 7.8, pos: ['Morning Revision Done', 'Phone in Another Room', 'Unbroken 90m Block'], neg: [], rule: 'Repeat 90-minute unbroken Polity sprint tomorrow.' },
+        { hrs: 11.2, pos: ['Mock / PYQs Solved', 'Unbroken 90m Block'], neg: ['Poor Sleep (<6h)', 'Over-Planning'], rule: 'Do not push past 10 hours; sleep by 11 PM to avoid crashing.' },
+        { hrs: 3.6, pos: [], neg: ['Poor Sleep (<6h)', 'Phone Distraction', 'Skipped Revision'], rule: 'Burnout dip after 11h day — stabilize at 7.5h sustainable baseline.' },
+        { hrs: 7.2, pos: ['Sleep Target (7h+)', 'Phone in Another Room', 'Morning Revision Done'], neg: [], rule: 'Keep daily to-do list strictly at 6 realistic targets.' },
+        { hrs: 8.0, pos: ['Morning Revision Done', 'Mock / PYQs Solved', 'Phone in Another Room'], neg: [], rule: 'Review wrong PYQs immediately after every mock test.' },
+        { hrs: 4.5, pos: [], neg: ['Phone Distraction', 'Heavy Meal / Sleepy'], rule: 'Take a 15-minute walk after lunch instead of scrolling phone.' },
+        { hrs: 7.6, pos: ['Morning Revision Done', 'Exercised', 'Unbroken 90m Block'], neg: [], rule: 'Keep Geography maps revision in the evening window.' },
+        { hrs: 8.4, pos: ['Morning Revision Done', 'Phone in Another Room', 'Mock / PYQs Solved', 'Sleep Target (7h+)'], neg: [], rule: 'Increase Active Recall ratio above 35% this week.' },
+        { hrs: 5.4, pos: ['Exercised'], neg: ['Late Morning Start', 'Skipped Revision'], rule: 'No new chapters until yesterday’s notes are revised.' },
+        { hrs: 7.9, pos: ['Morning Revision Done', 'Phone in Another Room', 'Sleep Target (7h+)'], neg: ['Heavy Meal / Sleepy'], rule: 'Lock phone in another room before 6:30 AM slot and keep lunch light.' }
+      ];
+
+      dayPatterns.forEach((p, idx) => {
+        const dStr = offsetDateISO(-(13 - idx));
+        ledgerByDate[dStr] = { posTags: p.pos, negTags: p.neg, rule: p.rule };
+        const totalSec = Math.round(p.hrs * 3600);
+        // Split across morning (6-10), afternoon slump (14-16), evening (18-21)
+        const blocks = [
+          { h: 6, share: 0.34, mode: 'revise', subj: 'Polity & Constitution', pauses: 0, sw: 0, fi: 96 },
+          { h: 9, share: 0.28, mode: 'learn', subj: 'Modern History', pauses: 1, sw: 0, fi: 91 },
+          { h: 14, share: 0.16, mode: 'learn', subj: 'Economy Concepts', pauses: 4, sw: 3, fi: 64 },
+          { h: 19, share: 0.22, mode: 'test', subj: 'PYQs & MCQ Drill', pauses: 1, sw: 1, fi: 87 }
+        ];
+        blocks.forEach((b, bi) => {
+          const sec = Math.round(totalSec * b.share);
+          const hasDistraction = p.neg.includes('Phone Distraction');
+          sessions.push({
+            id: uid(),
+            date: dStr,
+            startHour: b.h,
+            durationSec: sec,
+            examId: bi === 3 ? 'ex_opt' : 'ex_main',
+            subject: b.subj,
+            mode: b.mode,
+            pauses: b.pauses + (hasDistraction ? 2 : 0),
+            tabSwitches: b.sw + (hasDistraction ? 2 : 0),
+            focusIntegrity: Math.max(45, b.fi - (hasDistraction ? 14 : 0)),
+            slotId: null,
+            slotDelayMin: p.neg.includes('Late Morning Start') && bi === 0 ? 35 : 4
+          });
+        });
+      });
+
+      const today = offsetDateISO(0);
+      // Today's initial morning session so Observatory feels alive immediately
+      sessions.push({
+        id: uid(),
+        date: today,
+        startHour: 6,
+        durationSec: 5400, // 1.5h
+        examId: 'ex_main',
+        subject: 'Polity — Constitutional Bodies',
+        mode: 'revise',
+        pauses: 1,
+        tabSwitches: 0,
+        focusIntegrity: 95,
+        slotId: 'slot_1',
+        slotDelayMin: 5
+      });
+
+      slotsByDate[today] = [
+        { id: 'slot_1', start: '06:30', end: '08:00', examId: 'ex_main', subject: 'Polity — Constitutional Bodies', mode: 'revise', completed: true },
+        { id: 'slot_2', start: '09:30', end: '11:30', examId: 'ex_main', subject: 'Modern History — 1905–1947', mode: 'learn', completed: false },
+        { id: 'slot_3', start: '14:30', end: '16:00', examId: 'ex_main', subject: '50 PYQs Timed Practice', mode: 'test', completed: false },
+        { id: 'slot_4', start: '19:00', end: '20:30', examId: 'ex_opt', subject: 'Current Affairs Consolidation', mode: 'revise', completed: false }
+      ];
+
+      tasksByDate[today] = [
+        { id: uid(), text: 'Revise Election Commission & CAG articles', done: true },
+        { id: uid(), text: 'Complete Spectrum Ch. 14 notes', done: true },
+        { id: uid(), text: 'Solve 50 Prelims PYQs (2019–2024)', done: false },
+        { id: uid(), text: 'Audit weak areas from last mock test', done: false },
+        { id: uid(), text: '30-second Vitruvia Ledger before sleep', done: false }
+      ];
+
+      const blueprints = [
+        {
+          id: 'bp_deep8',
+          name: 'Deep Work 8h (Balanced)',
+          slots: [
+            { start: '06:30', end: '08:30', examId: 'ex_main', subject: 'Morning Active Recall', mode: 'revise' },
+            { start: '09:30', end: '12:00', examId: 'ex_main', subject: 'Core Concept Reading', mode: 'learn' },
+            { start: '15:00', end: '16:30', examId: 'ex_main', subject: 'PYQs & Timed Drills', mode: 'test' },
+            { start: '19:00', end: '21:00', examId: 'ex_opt', subject: 'Secondary Subject / Revision', mode: 'revise' }
+          ]
+        },
+        {
+          id: 'bp_rev',
+          name: 'High-Retention Revision Sprint',
+          slots: [
+            { start: '06:00', end: '08:30', examId: 'ex_main', subject: 'Flash Recall + Short Notes', mode: 'revise' },
+            { start: '10:00', end: '12:00', examId: 'ex_main', subject: 'Full Sectional Mock Test', mode: 'test' },
+            { start: '15:00', end: '17:00', examId: 'ex_main', subject: 'Error Notebook Analysis', mode: 'revise' }
+          ]
+        }
+      ];
+
+      return {
+        theme: 'light',
+        exams,
+        sessions,
+        slotsByDate,
+        tasksByDate,
+        ledgerByDate,
+        blueprints,
+        customPosTags: [],
+        customNegTags: []
+      };
+    }
+
+    function buildBlankState() {
+      return {
+        theme: state ? state.theme : 'light',
+        exams: [
+          { id: 'ex_1', name: 'Primary Exam', targetHours: 6, color: '#A68246' }
+        ],
+        sessions: [],
+        slotsByDate: {},
+        tasksByDate: {},
+        ledgerByDate: {},
+        blueprints: [
+          {
+            id: 'bp_deep8',
+            name: 'Deep Work 8h (Balanced)',
+            slots: [
+              { start: '06:30', end: '08:30', examId: 'ex_1', subject: 'Morning Active Recall', mode: 'revise' },
+              { start: '09:30', end: '12:00', examId: 'ex_1', subject: 'Core Concept Reading', mode: 'learn' },
+              { start: '15:00', end: '16:30', examId: 'ex_1', subject: 'PYQs & Timed Drills', mode: 'test' },
+              { start: '19:00', end: '21:00', examId: 'ex_1', subject: 'Evening Revision', mode: 'revise' }
+            ]
+          }
+        ],
+        customPosTags: [],
+        customNegTags: []
+      };
+    }
+
+    let state;
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          state = JSON.parse(raw);
+          return;
+        }
+      } catch (e) {}
+      state = buildDemoState();
+      saveState();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    // UI State
+    let activeTab = 'observatory';
+    let examRange = 'today';
+    let archDate = offsetDateISO(0);
+    let ledgerDate = offsetDateISO(0);
+    let selectedHour = 6;
+
+    // Chronometer Runtime State
+    const chrono = {
+      type: 'stopwatch', // 'stopwatch' | 'timer'
+      targetSec: 2700,   // 45 min default for countdown
+      elapsedSec: 0,
+      running: false,
+      intervalId: null,
+      lastTickMs: null,
+      pauses: 0,
+      tabSwitches: 0,
+      mode: 'learn',
+      startedAtDate: null,
+      hasStartedOnce: false
+    };
+
+    // Toast helper
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+    }
+
+    // Theme
+    function applyTheme(t) {
+      state.theme = t;
+      document.documentElement.setAttribute('data-theme', t);
+      document.getElementById('meta-theme-color').setAttribute('content', t === 'dark' ? '#0F1114' : '#F4EFE6');
+      const icon = document.getElementById('theme-icon-svg');
+      if (t === 'dark') {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      } else {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      }
+      saveState();
+    }
+
+    // Navigation
+    function switchTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(`panel-${tab}`).classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tab);
+      });
+      renderAll();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // =========================================================================
+    // TAB I: OBSERVATORY RENDERING
+    // =========================================================================
+    function setRing(circleId, valId, pct) {
+      const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+      const circ = 201.06;
+      const offset = circ * (1 - clamped / 100);
+      document.getElementById(circleId).style.strokeDashoffset = offset.toFixed(2);
+      document.getElementById(valId).textContent = `${clamped}%`;
+    }
+
+    function renderObservatory() {
+      const today = offsetDateISO(0);
+      const yesterday = offsetDateISO(-1);
+
+      // Mandate
+      const yLedger = state.ledgerByDate[yesterday];
+      const tLedger = state.ledgerByDate[today];
+      const ruleText = (yLedger && yLedger.rule) ? yLedger.rule :
+                       (tLedger && tLedger.rule) ? tLedger.rule :
+                       'No mandate sealed yet. Tap Ledger tonight to set tomorrow’s rule.';
+      document.getElementById('obs-mandate-text').textContent = `"${ruleText}"`;
+
+      // Today's hours
+      const todaySessions = state.sessions.filter(s => s.date === today);
+      const todaySec = todaySessions.reduce((a, s) => a + s.durationSec, 0);
+      document.getElementById('obs-today-hrs').textContent = `${(todaySec / 3600).toFixed(1)}h today`;
+
+      // 1. Consistency Index (last 7 days showing up >= 2h or meeting baseline)
+      let activeDays = 0;
+      for (let i = 0; i < 7; i++) {
+        const d = offsetDateISO(-i);
+        const sec = state.sessions.filter(s => s.date === d).reduce((a, s) => a + s.durationSec, 0);
+        if (sec >= 3600) activeDays++;
+      }
+      const consistencyPct = Math.round((activeDays / 7) * 100);
+
+      // 2. Focus Integrity (weighted average of recent 7 days, or today if present)
+      const last7Dates = new Set(Array.from({ length: 7 }, (_, i) => offsetDateISO(-i)));
+      const recentSessions = state.sessions.filter(s => last7Dates.has(s.date));
+      const focusPct = recentSessions.length
+        ? Math.round(recentSessions.reduce((a, s) => a + s.focusIntegrity, 0) / recentSessions.length)
+        : 0;
+
+      // 3. Task Reality Score (today's tasks)
+      const todayTasks = state.tasksByDate[today] || [];
+      const doneTasks = todayTasks.filter(t => t.done).length;
+      const realityPct = todayTasks.length ? Math.round((doneTasks / todayTasks.length) * 100) : 0;
+
+      setRing('ring-consistency', 'val-consistency', consistencyPct);
+      setRing('ring-focus', 'val-focus', focusPct);
+      setRing('ring-reality', 'val-reality', realityPct);
+
+      // Mentor Diagnostic Brief
+      const briefs = [];
+      const totalRecentSec = recentSessions.reduce((a, s) => a + s.durationSec, 0);
+      if (totalRecentSec === 0) {
+        briefs.push({
+          type: 'info',
+          tag: 'READY',
+          text: 'Your Observatory is clean. Start your first session in Chronometer (Tab II) to calibrate your biological peak and focus integrity.'
+        });
+      } else {
+        const revTestSec = recentSessions
+          .filter(s => s.mode === 'revise' || s.mode === 'test')
+          .reduce((a, s) => a + s.durationSec, 0);
+        const revPct = Math.round((revTestSec / totalRecentSec) * 100);
+        if (revPct < 30) {
+          briefs.push({
+            type: 'warn',
+            tag: 'RETENTION RISK',
+            text: `Only ${revPct}% of your last 7 days was Active Recall or Testing. Competitive ranks are built above 40% revision/PYQs—shift your next slot.`
+          });
+        } else {
+          briefs.push({
+            type: 'good',
+            tag: 'BALANCED',
+            text: `${revPct}% of your recent study time went to Active Recall & Testing. Strong exam-readiness ratio.`
+          });
+        }
+
+        // Peak vs Slump hour detection
+        const hourMap = computeHourStats();
+        const activeHours = hourMap.filter(h => h.totalSec > 0);
+        if (activeHours.length >= 2) {
+          const sorted = [...activeHours].sort((a, b) => b.avgFocus - a.avgFocus);
+          const peak = sorted[0];
+          const slump = sorted[sorted.length - 1];
+          briefs.push({
+            type: 'info',
+            tag: 'BIOLOGICAL WINDOW',
+            text: `Peak Deep Work is ${String(peak.hour).padStart(2, '0')}:00 (${peak.avgFocus}% integrity). Lowest focus window is ${String(slump.hour).padStart(2, '0')}:00 (${slump.avgFocus}%)—schedule light MCQs or a break there.`
+          });
+        }
+
+        // Over-planning check
+        if (todayTasks.length > 8) {
+          briefs.push({
+            type: 'warn',
+            tag: 'OVER-PLANNING',
+            text: `You listed ${todayTasks.length} tasks today. Cut to 6–8 high-leverage goals to protect your Task Reality Score.`
+          });
+        }
+      }
+
+      const briefEl = document.getElementById('obs-diagnostic-list');
+      briefEl.innerHTML = briefs.map(b => `
+        <div class="brief-item">
+          <span class="brief-badge badge-${b.type}">${b.tag}</span>
+          <span>${b.text}</span>
+        </div>
+      `).join('');
+
+      // Exam-Wise Macro Tracker
+      const now = new Date();
+      const curMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      const curYear = `${now.getFullYear()}`;
+      const filtered = state.sessions.filter(s => {
+        if (examRange === 'today') return s.date === today;
+        if (examRange === 'month') return s.date.startsWith(curMonth);
+        return s.date.startsWith(curYear);
+      });
+
+      const examListEl = document.getElementById('obs-exam-list');
+      examListEl.innerHTML = state.exams.map(ex => {
+        const exSessions = filtered.filter(s => s.examId === ex.id);
+        const learnSec = exSessions.filter(s => s.mode === 'learn').reduce((a, s) => a + s.durationSec, 0);
+        const revSec = exSessions.filter(s => s.mode === 'revise').reduce((a, s) => a + s.durationSec, 0);
+        const testSec = exSessions.filter(s => s.mode === 'test').reduce((a, s) => a + s.durationSec, 0);
+        const total = learnSec + revSec + testSec;
+        const pL = total ? (learnSec / total) * 100 : 0;
+        const pR = total ? (revSec / total) * 100 : 0;
+        const pT = total ? (testSec / total) * 100 : 0;
+        return `
+          <div class="exam-row">
+            <div class="exam-row-top">
+              <div class="exam-name">
+                <span class="exam-dot" style="background:${ex.color};"></span>
+                ${escapeHtml(ex.name)}
+              </div>
+              <div class="mono small" style="font-weight:600;">${(total / 3600).toFixed(1)} hrs</div>
+            </div>
+            <div class="stacked-bar">
+              <div class="bar-learn" style="width:${pL.toFixed(1)}%"></div>
+              <div class="bar-revise" style="width:${pR.toFixed(1)}%"></div>
+              <div class="bar-test" style="width:${pT.toFixed(1)}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // TAB II: CHRONOMETER ENGINE
+    // =========================================================================
+    function initAstrolabeTicks() {
+      const g = document.getElementById('astrolabe-ticks');
+      let svg = '';
+      for (let i = 0; i < 60; i++) {
+        const ang = (i * 6 - 90) * Math.PI / 180;
+        const isMajor = i % 5 === 0;
+        const r1 = isMajor ? 100 : 103;
+        const r2 = 108;
+        const x1 = 120 + r1 * Math.cos(ang);
+        const y1 = 120 + r1 * Math.sin(ang);
+        const x2 = 120 + r2 * Math.cos(ang);
+        const y2 = 120 + r2 * Math.sin(ang);
+        svg += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="var(--brass)" stroke-width="${isMajor ? 1.6 : 0.8}" stroke-opacity="${isMajor ? 0.9 : 0.45}" />`;
+      }
+      g.innerHTML = svg;
+    }
+
+    function formatHMS(totalSec) {
+      const s = Math.max(0, Math.floor(totalSec));
+      const hh = String(Math.floor(s / 3600)).padStart(2, '0');
+      const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+      const ss = String(s % 60).padStart(2, '0');
+      return `${hh}:${mm}:${ss}`;
+    }
+
+    function calcLiveIntegrity() {
+      // Deduct 5% per pause, 8% per app/tab exit, floor 30%
+      return Math.max(30, 100 - chrono.pauses * 5 - chrono.tabSwitches * 8);
+    }
+
+    function updateChronoVisuals() {
+      let displaySec = chrono.type === 'stopwatch'
+        ? chrono.elapsedSec
+        : Math.max(0, chrono.targetSec - chrono.elapsedSec);
+
+      const hms = formatHMS(displaySec);
+      document.getElementById('chrono-display').textContent = hms;
+      document.getElementById('zen-time-display').textContent = hms;
+
+      const fi = calcLiveIntegrity();
+      const fiEl = document.getElementById('live-integrity');
+      fiEl.textContent = `${fi}%`;
+      fiEl.style.color = fi >= 85 ? 'var(--sage)' : fi >= 65 ? 'var(--brass)' : 'var(--sienna)';
+      document.getElementById('live-pauses').textContent = chrono.pauses;
+      document.getElementById('live-switches').textContent = chrono.tabSwitches;
+      document.getElementById('zen-integrity-display').textContent = `FOCUS INTEGRITY: ${fi}% · PAUSES: ${chrono.pauses}`;
+
+      // Astrolabe progress & rotating needle
+      const circ = 603.19;
+      let progressFrac = 0;
+      if (chrono.type === 'timer' && chrono.targetSec > 0) {
+        progressFrac = Math.min(1, chrono.elapsedSec / chrono.targetSec);
+      } else {
+        progressFrac = (chrono.elapsedSec % 3600) / 3600;
+      }
+      document.getElementById('astrolabe-progress').style.strokeDashoffset = (circ * (1 - progressFrac)).toFixed(2);
+      const deg = (chrono.elapsedSec % 60) * 6;
+      document.getElementById('astrolabe-needle').setAttribute('transform', `rotate(${deg} 120 120)`);
+
+      const statusEl = document.getElementById('chrono-status');
+      const btn = document.getElementById('btn-chrono-toggle');
+      const zenBtn = document.getElementById('btn-zen-toggle-run');
+      if (chrono.running) {
+        statusEl.textContent = 'RECORDING TELEMETRY';
+        btn.textContent = 'Pause';
+        zenBtn.textContent = 'Pause';
+      } else if (chrono.elapsedSec > 0) {
+        statusEl.textContent = 'PAUSED';
+        btn.textContent = 'Resume';
+        zenBtn.textContent = 'Resume';
+      } else {
+        statusEl.textContent = 'STANDBY';
+        btn.textContent = 'Start Session';
+        zenBtn.textContent = 'Start';
+      }
+    }
+
+    function toggleChrono() {
+      if (chrono.running) {
+        // Pause
+        chrono.running = false;
+        clearInterval(chrono.intervalId);
+        chrono.pauses += 1;
+        updateChronoVisuals();
+        showToast('Session paused (−5% focus integrity logged)');
+      } else {
+        // Start / Resume
+        if (!chrono.hasStartedOnce) {
+          chrono.hasStartedOnce = true;
+          chrono.startedAtDate = new Date();
+        }
+        chrono.running = true;
+        chrono.lastTickMs = Date.now();
+        chrono.intervalId = setInterval(() => {
+          const now = Date.now();
+          const delta = Math.floor((now - chrono.lastTickMs) / 1000);
+          if (delta >= 1) {
+            chrono.elapsedSec += delta;
+            chrono.lastTickMs += delta * 1000;
+            if (chrono.type === 'timer' && chrono.elapsedSec >= chrono.targetSec) {
+              chrono.elapsedSec = chrono.targetSec;
+              chrono.running = false;
+              clearInterval(chrono.intervalId);
+              showToast('Countdown complete! Tap Log & Finish to record.');
+            }
+            updateChronoVisuals();
+          }
+        }, 250);
+        updateChronoVisuals();
+      }
+    }
+
+    function resetChrono() {
+      chrono.running = false;
+      clearInterval(chrono.intervalId);
+      chrono.elapsedSec = 0;
+      chrono.pauses = 0;
+      chrono.tabSwitches = 0;
+      chrono.hasStartedOnce = false;
+      chrono.startedAtDate = null;
+      updateChronoVisuals();
+    }
+
+    function saveChronoSession() {
+      if (chrono.elapsedSec < 5) {
+        showToast('Run the chronometer for at least 5 seconds to log.');
+        return;
+      }
+      chrono.running = false;
+      clearInterval(chrono.intervalId);
+
+      const examId = document.getElementById('chrono-exam-select').value || state.exams[0].id;
+      const subject = document.getElementById('chrono-subject-input').value.trim() || 'Focused Study';
+      const slotId = document.getElementById('chrono-slot-select').value || null;
+      const startDt = chrono.startedAtDate || new Date();
+      const today = offsetDateISO(0);
+
+      // Compute slot delay if bound to a scheduled slot
+      let slotDelayMin = 0;
+      if (slotId && state.slotsByDate[today]) {
+        const slot = state.slotsByDate[today].find(s => s.id === slotId);
+        if (slot) {
+          const [sh, sm] = slot.start.split(':').map(Number);
+          const plannedMin = sh * 60 + sm;
+          const actualMin = startDt.getHours() * 60 + startDt.getMinutes();
+          slotDelayMin = Math.max(0, actualMin - plannedMin);
+          slot.completed = true;
+        }
+      }
+
+      const loggedSec = chrono.elapsedSec;
+      const fi = calcLiveIntegrity();
+
+      state.sessions.push({
+        id: uid(),
+        date: today,
+        startHour: startDt.getHours(),
+        durationSec: loggedSec,
+        examId,
+        subject,
+        mode: chrono.mode,
+        pauses: chrono.pauses,
+        tabSwitches: chrono.tabSwitches,
+        focusIntegrity: fi,
+        slotId,
+        slotDelayMin
+      });
+
+      saveState();
+      resetChrono();
+      renderAll();
+      const mins = Math.max(1, Math.round(loggedSec / 60));
+      showToast(`Logged ${mins}m · ${fi}% Integrity to Observatory`);
+    }
+
+    function populateChronoDropdowns() {
+      const today = offsetDateISO(0);
+      const examSel = document.getElementById('chrono-exam-select');
+      const prevExam = examSel.value;
+      examSel.innerHTML = state.exams.map(e => `<option value="${e.id}">${escapeHtml(e.name)}</option>`).join('');
+      if (prevExam && state.exams.some(e => e.id === prevExam)) examSel.value = prevExam;
+
+      const slotSel = document.getElementById('chrono-slot-select');
+      const prevSlot = slotSel.value;
+      const slots = state.slotsByDate[today] || [];
+      slotSel.innerHTML = `<option value="">Unscheduled Deep Work</option>` +
+        slots.map(s => `<option value="${s.id}">${s.start}–${s.end} · ${escapeHtml(s.subject)}</option>`).join('');
+      if (prevSlot && slots.some(s => s.id === prevSlot)) slotSel.value = prevSlot;
+    }
+
+    // Track app/tab switching while Chronometer is running
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && chrono.running) {
+        chrono.tabSwitches += 1;
+        updateChronoVisuals();
+      }
+    });
+
+    // =========================================================================
+    // TAB III: ARCHITECTURE (SLOTS, COPY DAY, BLUEPRINTS, TO-DO)
+    // =========================================================================
+    function renderArchitecture() {
+      const today = offsetDateISO(0);
+      const tomorrow = offsetDateISO(1);
+      const yesterday = offsetDateISO(-1);
+      let label = archDate;
+      if (archDate === today) label = 'Today';
+      else if (archDate === tomorrow) label = 'Tomorrow';
+      else if (archDate === yesterday) label = 'Yesterday';
+      document.getElementById('arch-date-label').textContent = label;
+      document.getElementById('arch-date-input').value = archDate;
+
+      // Populate add-slot exam select
+      const slotExamSel = document.getElementById('slot-exam');
+      slotExamSel.innerHTML = state.exams.map(e => `<option value="${e.id}">${escapeHtml(e.name)}</option>`).join('');
+
+      // Slots list
+      const slots = (state.slotsByDate[archDate] || []).sort((a, b) => a.start.localeCompare(b.start));
+      const slotsEl = document.getElementById('arch-slots-list');
+      if (slots.length === 0) {
+        slotsEl.innerHTML = `<p class="small muted" style="padding:8px 0;">No study slots scheduled for ${label}. Add one below or load a Blueprint.</p>`;
+      } else {
+        const modeNames = { learn: 'New Learning', revise: 'Active Recall', test: 'Testing / PYQ' };
+        slotsEl.innerHTML = slots.map(s => {
+          const ex = state.exams.find(e => e.id === s.examId);
+          return `
+            <div class="slot-card ${s.completed ? 'done' : ''}">
+              <div style="flex:1; min-width:0;">
+                <div class="slot-time">${s.start} – ${s.end}</div>
+                <div class="slot-title">${escapeHtml(s.subject)}</div>
+                <div class="slot-meta">${ex ? escapeHtml(ex.name) : 'General'} · ${modeNames[s.mode] || s.mode}</div>
+              </div>
+              <div class="row">
+                <button class="btn btn-sm btn-brass" onclick="launchSlotInChrono('${s.id}')">Start ▶</button>
+                <button class="btn btn-sm" onclick="toggleSlotDone('${s.id}')" title="Mark done">${s.completed ? '✓' : '○'}</button>
+                <button class="btn btn-sm" onclick="deleteSlot('${s.id}')" title="Delete">×</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Tasks list + Over-Planning Guardrail
+      const tasks = state.tasksByDate[archDate] || [];
+      const doneCount = tasks.filter(t => t.done).length;
+      document.getElementById('arch-task-stats').textContent = `${doneCount} / ${tasks.length} done`;
+      document.getElementById('overplan-alert').classList.toggle('show', tasks.length > 8);
+
+      const tasksEl = document.getElementById('arch-tasks-list');
+      if (tasks.length === 0) {
+        tasksEl.innerHTML = `<p class="small muted" style="padding:6px 0;">No daily targets yet. Keep it sharp and achievable (3–6 items).</p>`;
+      } else {
+        tasksEl.innerHTML = tasks.map(t => `
+          <div class="task-row">
+            <button class="task-check ${t.done ? 'checked' : ''}" onclick="toggleTask('${t.id}')">${t.done ? '✓' : ''}</button>
+            <span class="task-text ${t.done ? 'checked' : ''}">${escapeHtml(t.text)}</span>
+            <button class="btn btn-sm" style="border:none; background:transparent; color:var(--ink-faint);" onclick="deleteTask('${t.id}')">×</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    window.launchSlotInChrono = function(slotId) {
+      const slots = state.slotsByDate[archDate] || [];
+      const slot = slots.find(s => s.id === slotId);
+      if (!slot) return;
+      switchTab('chronometer');
+      populateChronoDropdowns();
+      document.getElementById('chrono-exam-select').value = slot.examId;
+      document.getElementById('chrono-subject-input').value = slot.subject;
+      if (archDate === offsetDateISO(0)) {
+        document.getElementById('chrono-slot-select').value = slot.id;
+      }
+      setChronoMode(slot.mode);
+      showToast(`Bound Chronometer to "${slot.subject}"`);
+    };
+
+    window.toggleSlotDone = function(slotId) {
+      const slots = state.slotsByDate[archDate] || [];
+      const slot = slots.find(s => s.id === slotId);
+      if (slot) { slot.completed = !slot.completed; saveState(); renderArchitecture(); }
+    };
+
+    window.deleteSlot = function(slotId) {
+      state.slotsByDate[archDate] = (state.slotsByDate[archDate] || []).filter(s => s.id !== slotId);
+      saveState();
+      renderArchitecture();
+      populateChronoDropdowns();
+    };
+
+    window.toggleTask = function(taskId) {
+      const tasks = state.tasksByDate[archDate] || [];
+      const t = tasks.find(x => x.id === taskId);
+      if (t) { t.done = !t.done; saveState(); renderAll(); }
+    };
+
+    window.deleteTask = function(taskId) {
+      state.tasksByDate[archDate] = (state.tasksByDate[archDate] || []).filter(x => x.id !== taskId);
+      saveState();
+      renderAll();
+    };
+
+    function renderBlueprintsModal() {
+      document.getElementById('bp-target-date-lbl').textContent = archDate;
+      const list = document.getElementById('blueprints-list');
+      list.innerHTML = state.blueprints.map(bp => `
+        <div class="slot-card" style="margin-bottom:0;">
+          <div>
+            <div class="slot-title">${escapeHtml(bp.name)}</div>
+            <div class="slot-meta">${bp.slots.length} study slots</div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="applyBlueprint('${bp.id}')">Apply</button>
+        </div>
+      `).join('');
+    }
+
+    window.applyBlueprint = function(bpId) {
+      const bp = state.blueprints.find(b => b.id === bpId);
+      if (!bp) return;
+      state.slotsByDate[archDate] = bp.slots.map(s => ({
+        ...s,
+        id: uid(),
+        examId: state.exams.some(e => e.id === s.examId) ? s.examId : state.exams[0].id,
+        completed: false
+      }));
+      saveState();
+      closeModal('modal-blueprints');
+      renderAll();
+      showToast(`Applied "${bp.name}" to ${archDate}`);
+    };
+
+    // =========================================================================
+    // TAB IV: LEDGER (DAILY + / - RECOVERY CHECK-IN)
+    // =========================================================================
+    function getOrInitLedger(dateStr) {
+      if (!state.ledgerByDate[dateStr]) {
+        state.ledgerByDate[dateStr] = { posTags: [], negTags: [], rule: '' };
+      }
+      return state.ledgerByDate[dateStr];
+    }
+
+    function renderLedger() {
+      document.getElementById('ledger-date-input').value = ledgerDate;
+      const entry = getOrInitLedger(ledgerDate);
+
+      const posPool = [...DEFAULT_POS_TAGS, ...state.customPosTags];
+      const negPool = [...DEFAULT_NEG_TAGS, ...state.customNegTags];
+
+      document.getElementById('ledger-pos-tags').innerHTML = posPool.map(tag => {
+        const active = entry.posTags.includes(tag);
+        return `<button class="tag-pill ${active ? 'pos-on' : ''}" onclick="toggleLedgerTag('pos', '${escapeAttr(tag)}')">+ ${escapeHtml(tag)}</button>`;
+      }).join('');
+
+      document.getElementById('ledger-neg-tags').innerHTML = negPool.map(tag => {
+        const active = entry.negTags.includes(tag);
+        return `<button class="tag-pill ${active ? 'neg-on' : ''}" onclick="toggleLedgerTag('neg', '${escapeAttr(tag)}')">− ${escapeHtml(tag)}</button>`;
+      }).join('');
+
+      const net = entry.posTags.length - entry.negTags.length;
+      const netEl = document.getElementById('ledger-net-badge');
+      netEl.textContent = `NET ${net >= 0 ? '+' : ''}${net} (+${entry.posTags.length} / −${entry.negTags.length})`;
+      netEl.style.color = net > 0 ? 'var(--sage)' : net < 0 ? 'var(--sienna)' : 'var(--ink-muted)';
+
+      document.getElementById('ledger-rule-input').value = entry.rule || '';
+
+      // History Archive
+      const dates = Object.keys(state.ledgerByDate)
+        .filter(d => {
+          const e = state.ledgerByDate[d];
+          return e.posTags.length || e.negTags.length || (e.rule && e.rule.trim());
+        })
+        .sort((a, b) => b.localeCompare(a))
+        .slice(0, 10);
+
+      const histEl = document.getElementById('ledger-history-list');
+      if (dates.length === 0) {
+        histEl.innerHTML = `<p class="small muted">No nightly check-ins sealed yet.</p>`;
+      } else {
+        histEl.innerHTML = dates.map(d => {
+          const e = state.ledgerByDate[d];
+          const n = e.posTags.length - e.negTags.length;
+          return `
+            <div style="padding:10px 0; border-bottom:1px solid var(--border);">
+              <div class="row" style="justify-content:space-between;">
+                <span class="mono small" style="font-weight:600;">${d}</span>
+                <span class="mono small" style="color:${n >= 0 ? 'var(--sage)' : 'var(--sienna)'}; font-weight:600;">
+                  ${n >= 0 ? '+' : ''}${n} (+${e.posTags.length}/−${e.negTags.length})
+                </span>
+              </div>
+              ${e.rule ? `<div style="font-family:var(--font-serif); font-style:italic; font-size:15.5px; margin-top:4px;">"${escapeHtml(e.rule)}"</div>` : ''}
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    window.toggleLedgerTag = function(kind, tag) {
+      const entry = getOrInitLedger(ledgerDate);
+      const arr = kind === 'pos' ? entry.posTags : entry.negTags;
+      const idx = arr.indexOf(tag);
+      if (idx >= 0) arr.splice(idx, 1);
+      else arr.push(tag);
+      saveState();
+      renderLedger();
+    };
+
+    // =========================================================================
+    // TAB V: ATLAS (24H HEATMAP, CORRELATIONS, 14-DAY CHART, QUALITY)
+    // =========================================================================
+    function computeHourStats() {
+      const buckets = Array.from({ length: 24 }, (_, h) => ({
+        hour: h, totalSec: 0, count: 0, focusSum: 0, pauses: 0, switches: 0
+      }));
+      state.sessions.forEach(s => {
+        const h = Math.max(0, Math.min(23, Number(s.startHour) || 0));
+        buckets[h].totalSec += s.durationSec;
+        buckets[h].count += 1;
+        buckets[h].focusSum += s.focusIntegrity;
+        buckets[h].pauses += s.pauses || 0;
+        buckets[h].switches += s.tabSwitches || 0;
+      });
+      return buckets.map(b => ({
+        ...b,
+        avgFocus: b.count ? Math.round(b.focusSum / b.count) : 0
+      }));
+    }
+
+    function renderAtlas() {
+      // 1. 24-Hour Biological Productivity & Slump Map
+      const hours = computeHourStats();
+      const maxSec = Math.max(1800, ...hours.map(h => h.totalSec));
+      const gridEl = document.getElementById('atlas-hour-grid');
+      gridEl.innerHTML = hours.map(h => {
+        const heightPct = h.totalSec ? Math.max(18, Math.round((h.totalSec / maxSec) * 100)) : 8;
+        let color = 'var(--border-strong)';
+        if (h.totalSec > 0) {
+          color = h.avgFocus >= 85 ? 'var(--sage)' : h.avgFocus >= 70 ? 'var(--brass)' : 'var(--sienna)';
+        }
+        return `
+          <div class="hour-cell ${selectedHour === h.hour ? 'selected' : ''}" onclick="selectAtlasHour(${h.hour})">
+            <div class="hour-bar-track">
+              <div class="hour-bar-fill" style="height:${heightPct}%; background:${color};"></div>
+            </div>
+            <div class="hour-lbl">${String(h.hour).padStart(2, '0')}</div>
+          </div>
+        `;
+      }).join('');
+
+      const sel = hours[selectedHour];
+      const nextH = String((sel.hour + 1) % 24).padStart(2, '0');
+      const curH = String(sel.hour).padStart(2, '0');
+      const detailEl = document.getElementById('atlas-hour-detail');
+      if (sel.count === 0) {
+        detailEl.innerHTML = `
+          <div class="mono small" style="font-weight:600;">WINDOW ${curH}:00 – ${nextH}:00</div>
+          <div class="small muted" style="margin-top:3px;">No study sessions logged in this hour yet.</div>
+        `;
+      } else {
+        const zone = sel.avgFocus >= 85 ? 'PEAK DEEP WORK' : sel.avgFocus >= 70 ? 'MODERATE OUTPUT' : 'SLUMP / HIGH FRICTION';
+        const zoneColor = sel.avgFocus >= 85 ? 'var(--sage)' : sel.avgFocus >= 70 ? 'var(--brass)' : 'var(--sienna)';
+        detailEl.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <span class="mono small" style="font-weight:600;">WINDOW ${curH}:00 – ${nextH}:00</span>
+            <span class="mono small" style="color:${zoneColor}; font-weight:600;">${zone}</span>
+          </div>
+          <div class="small muted" style="margin-top:5px;">
+            <strong>${(sel.totalSec / 3600).toFixed(1)} hrs</strong> across ${sel.count} sessions ·
+            Avg Focus Integrity <strong>${sel.avgFocus}%</strong> ·
+            ${sel.pauses} pauses, ${sel.switches} app exits.
+          </div>
+        `;
+      }
+
+      // 2. WHOOP-Style Correlation Engine
+      const dayHours = {};
+      state.sessions.forEach(s => {
+        dayHours[s.date] = (dayHours[s.date] || 0) + s.durationSec / 3600;
+      });
+      const ledgerDates = Object.keys(state.ledgerByDate).filter(d => dayHours[d] !== undefined);
+      const allTags = new Set();
+      ledgerDates.forEach(d => {
+        state.ledgerByDate[d].posTags.forEach(t => allTags.add(t));
+        state.ledgerByDate[d].negTags.forEach(t => allTags.add(t));
+      });
+
+      const corrs = [];
+      allTags.forEach(tag => {
+        const withHrs = [];
+        const withoutHrs = [];
+        ledgerDates.forEach(d => {
+          const e = state.ledgerByDate[d];
+          const has = e.posTags.includes(tag) || e.negTags.includes(tag);
+          if (has) withHrs.push(dayHours[d]);
+          else withoutHrs.push(dayHours[d]);
+        });
+        if (withHrs.length >= 2 && withoutHrs.length >= 2) {
+          const avgWith = withHrs.reduce((a, b) => a + b, 0) / withHrs.length;
+          const avgWithout = withoutHrs.reduce((a, b) => a + b, 0) / withoutHrs.length;
+          corrs.push({ tag, delta: avgWith - avgWithout, count: withHrs.length });
+        }
+      });
+      corrs.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+
+      const corrEl = document.getElementById('atlas-correlations');
+      if (corrs.length === 0) {
+        corrEl.innerHTML = `<p class="small muted">Seal at least 4 days of Ledger check-ins + Study Sessions to unlock personal behavior correlations.</p>`;
+      } else {
+        corrEl.innerHTML = corrs.slice(0, 6).map(c => {
+          const pos = c.delta >= 0;
+          return `
+            <div class="corr-row">
+              <div>
+                <div style="font-size:13px; font-weight:600;">${escapeHtml(c.tag)}</div>
+                <div class="mono" style="font-size:10px; color:var(--ink-muted);">Observed on ${c.count} days</div>
+              </div>
+              <div class="corr-delta" style="color:${pos ? 'var(--sage)' : 'var(--sienna)'};">
+                ${pos ? '+' : ''}${c.delta.toFixed(1)} hrs/day
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 3. 14-Day Consistency vs. Burnout Chart (SVG)
+      const days14 = Array.from({ length: 14 }, (_, i) => {
+        const d = offsetDateISO(-(13 - i));
+        const hrs = state.sessions.filter(s => s.date === d).reduce((a, s) => a + s.durationSec, 0) / 3600;
+        return { date: d, label: d.slice(8), hrs };
+      });
+      const avg14 = days14.reduce((a, d) => a + d.hrs, 0) / 14;
+      document.getElementById('atlas-avg-hrs').textContent = `Avg ${avg14.toFixed(1)}h / day`;
+
+      const targetBase = state.exams.reduce((a, e) => a + (Number(e.targetHours) || 0), 0) || 7;
+      const maxH = Math.max(10, targetBase + 2, ...days14.map(d => d.hrs));
+      const W = 400, H = 148, padL = 26, padB = 22, padT = 14;
+      const chartH = H - padB - padT;
+      const barW = (W - padL - 10) / 14;
+      const targetY = padT + chartH * (1 - Math.min(1, targetBase / maxH));
+
+      let barsSvg = '';
+      days14.forEach((d, idx) => {
+        const x = padL + idx * barW + 4;
+        const bw = barW - 8;
+        const bh = Math.max(2, (d.hrs / maxH) * chartH);
+        const y = padT + chartH - bh;
+        // Detect burnout spike (>10.5h) or crash (<4h after a high day)
+        let fill = 'var(--brass)';
+        if (d.hrs >= 10.5) fill = 'var(--sienna)';
+        else if (d.hrs >= targetBase * 0.85) fill = 'var(--sage)';
+        barsSvg += `
+          <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${fill}" opacity="0.88" />
+          <text x="${(x + bw / 2).toFixed(1)}" y="${H - 6}" text-anchor="middle" fill="var(--ink-muted)" font-size="9" font-family="var(--font-mono)">${d.label}</text>
+        `;
+      });
+
+      document.getElementById('atlas-14day-chart').innerHTML = `
+        <svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto; display:block;">
+          <line x1="${padL}" y1="${targetY.toFixed(1)}" x2="${W - 6}" y2="${targetY.toFixed(1)}" stroke="var(--ink-muted)" stroke-width="1" stroke-dasharray="4 4" />
+          <text x="2" y="${(targetY + 3).toFixed(1)}" fill="var(--ink-muted)" font-size="9" font-family="var(--font-mono)">${targetBase}h</text>
+          ${barsSvg}
+        </svg>
+        <div class="legend-row">
+          <span class="legend-item"><span class="legend-swatch bar-revise"></span>Sustainable Hit</span>
+          <span class="legend-item"><span class="legend-swatch bar-learn"></span>Below Target</span>
+          <span class="legend-item"><span class="legend-swatch bar-test"></span>Burnout Spike (&gt;10.5h)</span>
+        </div>
+      `;
+
+      // 4. All-Time Quality Split
+      const learnT = state.sessions.filter(s => s.mode === 'learn').reduce((a, s) => a + s.durationSec, 0);
+      const revT = state.sessions.filter(s => s.mode === 'revise').reduce((a, s) => a + s.durationSec, 0);
+      const testT = state.sessions.filter(s => s.mode === 'test').reduce((a, s) => a + s.durationSec, 0);
+      const totT = learnT + revT + testT;
+      const pL = totT ? Math.round((learnT / totT) * 100) : 0;
+      const pR = totT ? Math.round((revT / totT) * 100) : 0;
+      const pT = totT ? Math.max(0, 100 - pL - pR) : 0;
+
+      document.getElementById('atlas-quality-bar').innerHTML = `
+        <div class="bar-learn" style="width:${pL}%"></div>
+        <div class="bar-revise" style="width:${pR}%"></div>
+        <div class="bar-test" style="width:${pT}%"></div>
+      `;
+      document.getElementById('atlas-quality-legend').innerHTML = `
+        <span class="legend-item"><span class="legend-swatch bar-learn"></span>Learning ${pL}% (${(learnT/3600).toFixed(1)}h)</span>
+        <span class="legend-item"><span class="legend-swatch bar-revise"></span>Revision ${pR}% (${(revT/3600).toFixed(1)}h)</span>
+        <span class="legend-item"><span class="legend-swatch bar-test"></span>Testing ${pT}% (${(testT/3600).toFixed(1)}h)</span>
+      `;
+    }
+
+    window.selectAtlasHour = function(h) {
+      selectedHour = h;
+      renderAtlas();
+    };
+
+    // =========================================================================
+    // HELPERS & EVENT WIRING
+    // =========================================================================
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function escapeAttr(str) {
+      return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    function setChronoMode(m) {
+      chrono.mode = m;
+      document.querySelectorAll('#chrono-mode-pills .mode-pill').forEach(btn => {
+        btn.className = 'mode-pill';
+        if (btn.dataset.mode === m) btn.classList.add(`active-${m}`);
+      });
+    }
+
+    function renderAll() {
+      const now = new Date();
+      document.getElementById('header-date-sub').textContent = now.toLocaleDateString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric'
+      }).toUpperCase();
+
+      renderObservatory();
+      populateChronoDropdowns();
+      updateChronoVisuals();
+      renderArchitecture();
+      renderLedger();
+      renderAtlas();
+    }
+
+    function wireEvents() {
+      // Bottom Nav
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+
+      // Theme & Vault
+      document.getElementById('btn-theme').addEventListener('click', () => {
+        applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+      });
+      document.getElementById('btn-vault').addEventListener('click', () => openModal('modal-vault'));
+
+      // Exam range toggle
+      document.querySelectorAll('#exam-range-seg .seg-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          examRange = btn.dataset.range;
+          document.querySelectorAll('#exam-range-seg .seg-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderObservatory();
+        });
+      });
+
+      // Add Exam Modal
+      document.getElementById('btn-open-exam-modal').addEventListener('click', () => openModal('modal-exam'));
+      document.getElementById('btn-confirm-add-exam').addEventListener('click', () => {
+        const name = document.getElementById('new-exam-name').value.trim();
+        const target = parseFloat(document.getElementById('new-exam-target').value) || 4;
+        if (!name) return showToast('Enter an exam name.');
+        state.exams.push({
+          id: 'ex_' + uid(),
+          name,
+          targetHours: target,
+          color: EXAM_PALETTE[state.exams.length % EXAM_PALETTE.length]
+        });
+        document.getElementById('new-exam-name').value = '';
+        saveState();
+        closeModal('modal-exam');
+        renderAll();
+        showToast(`Added "${name}"`);
+      });
+
+      // Chronometer controls
+      document.querySelectorAll('#chrono-type-seg .seg-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (chrono.running) return showToast('Pause session before switching mode.');
+          chrono.type = btn.dataset.type;
+          document.querySelectorAll('#chrono-type-seg .seg-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('timer-presets').style.display = chrono.type === 'timer' ? 'block' : 'none';
+          resetChrono();
+        });
+      });
+
+      document.querySelectorAll('.timer-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (chrono.running) return;
+          chrono.targetSec = Number(btn.dataset.min) * 60;
+          chrono.elapsedSec = 0;
+          updateChronoVisuals();
+          showToast(`Countdown set to ${btn.dataset.min} min`);
+        });
+      });
+
+      document.getElementById('custom-timer-min').addEventListener('change', (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (val > 0 && !chrono.running) {
+          chrono.targetSec = val * 60;
+          chrono.elapsedSec = 0;
+          updateChronoVisuals();
+        }
+      });
+
+      document.querySelectorAll('#chrono-mode-pills .mode-pill').forEach(btn => {
+        btn.addEventListener('click', () => setChronoMode(btn.dataset.mode));
+      });
+
+      document.getElementById('chrono-slot-select').addEventListener('change', (e) => {
+        const today = offsetDateISO(0);
+        const slot = (state.slotsByDate[today] || []).find(s => s.id === e.target.value);
+        if (slot) {
+          document.getElementById('chrono-exam-select').value = slot.examId;
+          document.getElementById('chrono-subject-input').value = slot.subject;
+          setChronoMode(slot.mode);
+        }
+      });
+
+      document.getElementById('btn-chrono-toggle').addEventListener('click', toggleChrono);
+      document.getElementById('btn-chrono-save').addEventListener('click', saveChronoSession);
+      document.getElementById('btn-chrono-reset').addEventListener('click', () => {
+        resetChrono();
+        showToast('Chronometer reset');
+      });
+
+      // Zen Mode
+      document.getElementById('btn-zen-mode').addEventListener('click', () => {
+        document.getElementById('zen-subject-label').textContent =
+          document.getElementById('chrono-subject-input').value.trim() || 'Focused Session';
+        document.getElementById('zen-overlay').classList.add('open');
+      });
+      document.getElementById('btn-zen-exit').addEventListener('click', () => {
+        document.getElementById('zen-overlay').classList.remove('open');
+      });
+      document.getElementById('btn-zen-toggle-run').addEventListener('click', toggleChrono);
+
+      // Architecture dates & slots
+      document.getElementById('arch-prev-day').addEventListener('click', () => {
+        const d = new Date(archDate + 'T12:00:00');
+        d.setDate(d.getDate() - 1);
+        archDate = fmtDateISO(d);
+        renderArchitecture();
+      });
+      document.getElementById('arch-next-day').addEventListener('click', () => {
+        const d = new Date(archDate + 'T12:00:00');
+        d.setDate(d.getDate() + 1);
+        archDate = fmtDateISO(d);
+        renderArchitecture();
+      });
+      document.getElementById('arch-date-input').addEventListener('change', (e) => {
+        if (e.target.value) { archDate = e.target.value; renderArchitecture(); }
+      });
+
+      document.getElementById('btn-add-slot').addEventListener('click', () => {
+        const start = document.getElementById('slot-start').value;
+        const end = document.getElementById('slot-end').value;
+        const examId = document.getElementById('slot-exam').value;
+        const mode = document.getElementById('slot-mode').value;
+        const subject = document.getElementById('slot-subject').value.trim();
+        if (!subject) return showToast('Enter a subject or topic for the slot.');
+        if (!state.slotsByDate[archDate]) state.slotsByDate[archDate] = [];
+        state.slotsByDate[archDate].push({ id: uid(), start, end, examId, mode, subject, completed: false });
+        document.getElementById('slot-subject').value = '';
+        saveState();
+        renderAll();
+        showToast('Study slot added');
+      });
+
+      document.getElementById('btn-copy-tomorrow').addEventListener('click', () => {
+        const curSlots = state.slotsByDate[archDate] || [];
+        if (curSlots.length === 0) return showToast('No slots on this day to copy.');
+        const d = new Date(archDate + 'T12:00:00');
+        d.setDate(d.getDate() + 1);
+        const nextIso = fmtDateISO(d);
+        state.slotsByDate[nextIso] = curSlots.map(s => ({ ...s, id: uid(), completed: false }));
+        saveState();
+        showToast(`Copied ${curSlots.length} slots to ${nextIso}`);
+      });
+
+      document.getElementById('btn-open-blueprints').addEventListener('click', () => {
+        renderBlueprintsModal();
+        openModal('modal-blueprints');
+      });
+
+      document.getElementById('btn-save-blueprint').addEventListener('click', () => {
+        const name = document.getElementById('new-bp-name').value.trim();
+        const curSlots = state.slotsByDate[archDate] || [];
+        if (!name) return showToast('Name your blueprint first.');
+        if (curSlots.length === 0) return showToast('Add at least one slot today first.');
+        state.blueprints.push({
+          id: 'bp_' + uid(),
+          name,
+          slots: curSlots.map(({ start, end, examId, subject, mode }) => ({ start, end, examId, subject, mode }))
+        });
+        document.getElementById('new-bp-name').value = '';
+        saveState();
+        renderBlueprintsModal();
+        showToast(`Saved blueprint "${name}"`);
+      });
+
+      // Tasks
+      document.getElementById('btn-add-task').addEventListener('click', () => {
+        const text = document.getElementById('new-task-input').value.trim();
+        if (!text) return;
+        if (!state.tasksByDate[archDate]) state.tasksByDate[archDate] = [];
+        state.tasksByDate[archDate].push({ id: uid(), text, done: false });
+        document.getElementById('new-task-input').value = '';
+        saveState();
+        renderAll();
+      });
+
+      // Ledger
+      document.getElementById('ledger-date-input').addEventListener('change', (e) => {
+        if (e.target.value) { ledgerDate = e.target.value; renderLedger(); }
+      });
+
+      document.getElementById('btn-add-pos-tag').addEventListener('click', () => {
+        const t = document.getElementById('custom-pos-input').value.trim();
+        if (!t) return;
+        if (!state.customPosTags.includes(t)) state.customPosTags.push(t);
+        const entry = getOrInitLedger(ledgerDate);
+        if (!entry.posTags.includes(t)) entry.posTags.push(t);
+        document.getElementById('custom-pos-input').value = '';
+        saveState();
+        renderLedger();
+      });
+
+      document.getElementById('btn-add-neg-tag').addEventListener('click', () => {
+        const t = document.getElementById('custom-neg-input').value.trim();
+        if (!t) return;
+        if (!state.customNegTags.includes(t)) state.customNegTags.push(t);
+        const entry = getOrInitLedger(ledgerDate);
+        if (!entry.negTags.includes(t)) entry.negTags.push(t);
+        document.getElementById('custom-neg-input').value = '';
+        saveState();
+        renderLedger();
+      });
+
+      document.getElementById('btn-save-ledger').addEventListener('click', () => {
+        const entry = getOrInitLedger(ledgerDate);
+        entry.rule = document.getElementById('ledger-rule-input').value.trim();
+        saveState();
+        renderAll();
+        showToast('Ledger sealed & recovery mandate updated');
+      });
+
+      // Data Vault actions
+      document.getElementById('btn-export-json').addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `vitruvia-backup-${offsetDateISO(0)}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showToast('JSON backup exported');
+      });
+
+      document.getElementById('input-import-json').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(reader.result);
+            if (!parsed.exams || !parsed.sessions) throw new Error('Invalid');
+            state = parsed;
+            saveState();
+            applyTheme(state.theme || 'light');
+            renderAll();
+            closeModal('modal-vault');
+            showToast('Backup restored successfully');
+          } catch (err) {
+            showToast('Invalid VITRUVIA backup file');
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+      });
+
+      document.getElementById('btn-load-demo').addEventListener('click', () => {
+        const t = state.theme;
+        state = buildDemoState();
+        state.theme = t;
+        saveState();
+        renderAll();
+        closeModal('modal-vault');
+        showToast('14-day demo telemetry loaded');
+      });
+
+      let wipeArmed = false;
+      document.getElementById('btn-wipe-blank').addEventListener('click', (e) => {
+        if (!wipeArmed) {
+          wipeArmed = true;
+          e.target.textContent = 'Tap Again to Confirm Blank Slate';
+          setTimeout(() => {
+            wipeArmed = false;
+            e.target.textContent = 'Reset to Blank Slate (Start Fresh)';
+          }, 4000);
+          return;
+        }
+        wipeArmed = false;
+        e.target.textContent = 'Reset to Blank Slate (Start Fresh)';
+        state = buildBlankState();
+        saveState();
+        resetChrono();
+        renderAll();
+        closeModal('modal-vault');
+        showToast('Reset to clean blank slate');
+      });
+
+      // Close modal on backdrop tap
+      document.querySelectorAll('.modal-backdrop').forEach(bg => {
+        bg.addEventListener('click', (e) => {
+          if (e.target === bg) bg.classList.remove('open');
+        });
+      });
+    }
+
+    // Boot
+    loadState();
+    applyTheme(state.theme || 'light');
+    initAstrolabeTicks();
+    wireEvents();
+    renderAll();
+
+    // Register Offline PWA Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
